@@ -1,0 +1,33 @@
+{
+  "name": "travel-assistant-frontend",
+  "version": "1.0.0",
+  "description": "Frontend for travel assistant app",
+  "main": "index.js",
+  "scripts": {
+    "start": "react-scripts start --openssl-legacy-provider",
+    "build": "react-scripts build --openssl-legacy-provider",
+    "test": "react-scripts test --openssl-legacy-provider",
+    "eject": "react-scripts eject"
+  },
+  "dependencies": {
+    "axios": "^1.7.7",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-scripts": "4.0.3"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "author": "Jad Kaedbey",
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
