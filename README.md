@@ -17,7 +17,6 @@
 - **Setting up Frontend**:
     - `cd frontend`
     - `npm install`
-    - `$env:NODE_OPTIONS = "--openssl-legacy-provider"` For PowerShell or `set NODE_OPTIONS=--openssl-legacy-provider` for Windows
 
 - **Running Backend**: 
     - `cd backend`
