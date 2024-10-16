@@ -1,10 +1,15 @@
 // frontend/src/components/Chatbox.js
 import React, { useState } from 'react';
-import axios from 'axios';
+import apiService from '../services/apiService';
+
+interface Message {
+    sender: string;
+    text: string;
+}
 
 const Chatbox = () => {
     const [input, setInput] = useState('');       // To hold user input
-    const [messages, setMessages] = useState([]); // To hold the conversation history
+    const [messages, setMessages] = useState<Message[]>([]); // To hold the conversation history
 
     // Function to send the user's query to the backend
     const sendMessage = async () => {
@@ -15,9 +20,7 @@ const Chatbox = () => {
     
         // Send the input to the FastAPI backend
         try {
-            const response = await axios.post('http://127.0.0.1:8000/query/', {
-                user_input: input
-            });
+            const response = await apiService.sendQuery(input);
     
             const botMessage = { sender: 'bot', text: JSON.stringify(response.data) };
             setMessages([...messages, userMessage, botMessage]);
@@ -44,7 +47,7 @@ const Chatbox = () => {
                     type="text"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                    onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
                     placeholder="Ask me something..."
                 />
                 <button onClick={sendMessage}>Send</button>
