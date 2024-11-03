@@ -1,0 +1,23 @@
+name: Lints_n_Tests
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+
+jobs:
+  # This workflow contains a single job called "build"
+  test_frontend:
+    # The type of runner that the job will run on
+    container: node:21.6.0-bookworm
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - uses: actions/checkout@v2
+      - name: install front-end dev packages
+        run: npm i --dev
+      - name: run front-end linter
+        run: npm run lint
