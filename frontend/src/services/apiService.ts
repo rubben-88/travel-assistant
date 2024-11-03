@@ -2,9 +2,7 @@
 import axios from 'axios';
 
 const apiService = {
-    sendQuery: (query: string) => {
-        return axios.post('http://localhost:8000/query/', { user_input: query });
-    }
+  sendQuery: async (query: string) => axios.post('http://localhost:8000/query/', { user_input: query })
 };
 
 export default apiService;
