@@ -14,8 +14,10 @@ from typing import List
 from app.models.event_model import Event
 from pathlib import Path
 from app.config import OPENTRIPMAP_API_KEY
+from pydantic import validate_call
 
 HOST = "opentripmap-places-v1.p.rapidapi.com"
+VALID_KINDS_FILE_PATH = Path(__file__).resolve().parents[2] / 'app' / 'api' / 'opentripmap_valid_kinds.txt'
 
 def make_request(endpoint: str, query_params: dict) -> dict:
     """General request function for OpenTripMap API"""
@@ -46,8 +48,7 @@ def make_request(endpoint: str, query_params: dict) -> dict:
             : {response.text}
         """)
 
-valid_kinds_file_path = Path(__file__).resolve().parents[2] / 'app' / 'api' / 'opentripmap_valid_kinds.txt'
-
+@validate_call
 def query_opentripmap(
     placename:      str,     
     radius:         int | None  = None,
@@ -94,7 +95,7 @@ def query_opentripmap(
     if walking_time != None:
         radius = (walking_time * 60) * 3   # assume 3m/s in bird flight distance
     
-    with open(valid_kinds_file_path, 'r') as file:
+    with open(VALID_KINDS_FILE_PATH, 'r') as file:
         valid_set = set(line.strip() for line in file)
     kinds = [kind.lower().replace(" ", "_") for kind in kinds]
     valid_kinds = []
