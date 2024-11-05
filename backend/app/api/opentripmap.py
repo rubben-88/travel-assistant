@@ -71,6 +71,14 @@ def query_opentripmap(
     <class 'list'>
     """
 
+    print(f"""Querying OpenTripMap for: 
+    placename={placename}, 
+    radius={radius}, 
+    walking_time={walking_time},
+    kinds={kinds},
+    limit={limit},
+    filter={filter}""")
+
     # check params
     if radius != None and walking_time != None:
         raise Exception(f"""
