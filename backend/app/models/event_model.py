@@ -4,7 +4,7 @@ from typing import Optional
 from datetime import datetime
 
 class Event(BaseModel):
-    id: str                      # Unique identifier for the event (could be from Eventbrite or your system)
+    id: str                      # Unique identifier for the event 
     name: str                    # Event name
     description: Optional[str]    # A brief description of the event
     location: str                # Location (could be a city or venue)

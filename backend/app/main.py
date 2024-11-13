@@ -2,7 +2,7 @@ import logging
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from app.api import nlp, events, weather
+from app.api import nlp, events, weather, overpass
 from app.api.opentripmap import query_opentripmap
 
 app = FastAPI()
@@ -52,11 +52,16 @@ def process_query(query: QueryRequest):
 
         # Step 4: Fetch weather from OpenWeatherMap
         weather_info = weather.query_weather(city, date)
-
+        
+        # TODO Implement ammenities keywords extraction in nlp
+        amenity = keywords[0] if keywords else "cafe"  # Use first keyword as amenity type or default to "cafe"
+        poi_results = overpass.get_poi_data(city, amenity)
+        
         # Step 5: Return the compiled response
         return {
             "events": event_results,
-            "weather": weather_info
+            "weather": weather_info,
+            "pois": poi_results
         }
     except Exception as e:
         logger.error(f"Error processing query: {e}", exc_info=True)  # Log the error details
