@@ -78,7 +78,7 @@ def add_message(message_info: InsertMessage):
         chats_collection.update_one(
             {"_id": ObjectId(message_info.session_id)},
             {
-                "$push": {"messages": {"user_or_chatbot": message_info.user_or_chatbot, "message": message_info.message}},
+                "$push": {"messages": {"user_or_chatbot": message_info.user_or_chatbot.value, "message": message_info.message}},
                 "$set": {"last_updated": datetime.datetime.now(datetime.timezone.utc)}
             }
         )

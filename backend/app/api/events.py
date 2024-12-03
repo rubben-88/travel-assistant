@@ -15,7 +15,8 @@ router = APIRouter()
 # Base URL for Eventbrite API
 EVENTBRITE_API_URL = "https://www.eventbriteapi.com/v3/events/search/"
 TICKETMASTER_API_URL = "https://app.ticketmaster.com/discovery/v2/events"
-PINNED_EVENTS_CSV = 'app/data/pinned_events.csv'
+PINNED_EVENTS_PATH = 'app/data/pinned_events.json'
+PINNED_LOCATIONS_PATH = 'app/data/pinned_locations.json'
 
 def query_eventbrite(city: str, date: str, keywords: list[str]) -> list[Event]:
     """Fetch events from Eventbrite API."""
@@ -125,18 +126,18 @@ def query_ticketmaster(city: str, date: str, keywords: list[str]) -> list[Event]
 def check_pinned_events(city: str = None, date: str = None, keywords: list[str] = None):
     """Check for pinned events and locations matching the given city, date, and keywords."""
     # Check in pinned events
-    with open('app/data/pinned_events.json', 'r', encoding='utf-8') as events_file:
+    with open(PINNED_EVENTS_PATH, 'r', encoding='utf-8') as events_file:
         pinned_events = json.load(events_file).get('pinned_events', [])
         for event in pinned_events:
             if (
-                (city is None or event['city'].lower() == city.lower()) and
+                (city is None or event['location'].lower() == city.lower()) and
                 (date is None or event['date'] == date) and
                 (keywords is None or any(keyword.lower() in event.get('category', '').lower() for keyword in keywords))
             ):
                 return {"type": "event", "data": event}
 
     # Check in pinned locations
-    with open('app/data/data/pinned_locations.json', 'r', encoding='utf-8') as locations_file:
+    with open(PINNED_LOCATIONS_PATH, 'r', encoding='utf-8') as locations_file:
         pinned_locations = json.load(locations_file).get('pinned_locations', [])
         for location in pinned_locations:
             if city is None or location['city'].lower() == city.lower():
