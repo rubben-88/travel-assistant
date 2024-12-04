@@ -126,7 +126,7 @@ const Chatbox: React.FC = () => {
                     {msg.user_or_chatbot}
                   </Typography>
                 }
-                secondary={<Typography variant="body2" style={{ whiteSpace: 'pre-line' }}>
+                secondary={<Typography variant="body2">
                   <ReactMarkdown>
                     {msg.message}
                   </ReactMarkdown>
