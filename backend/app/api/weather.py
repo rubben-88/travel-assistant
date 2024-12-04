@@ -1,6 +1,5 @@
 from pydantic import BaseModel, ValidationError
 from app.config import OPENWEATHERMAP_API_KEY
-from pathlib import Path
 import requests
 
 # Base URLs
@@ -86,6 +85,9 @@ def query_weather(query: WeatherQueryModel):
         result.get("weather", [{}])[0].get("description", "No description available").capitalize()
     )
     temperature = result.get("main", {}).get("temp", "N/A")
+    
+    if temperature != "N/A":
+        temperature = int(temperature)
 
     # Format and return the weather information
     return f"Current weather in {query.city}: {weather_description}, Temp: {temperature}°C"

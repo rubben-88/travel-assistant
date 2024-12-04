@@ -15,13 +15,14 @@ def generate_ai_style_response(events: list[Event], weather: str) -> str:
   else:
     response += "Here are some events you might enjoy:\n"
     for event in sorted_events:
-      event_date = (
-        f" on {event.date.strftime('%A, %B %d at %I:%M %p')}" if event.date else ""
-      )
-      description = ""
+      # event_date = (
+      #   f" on {event.date.strftime('%A, %B %d at %I:%M %p')}" if event.date else ""
+      # )
+      # description = ""
       
-      if event.description:
-        description = f" - {description}"
+      # if event.description:
+      #   description = f" - {description}"
       
-      response += f"- **{event.name}** at {event.location}{event_date}{description}\n"
+      # response += f"- {event.name}** at {event.location}{event_date}{description}\n"
+      response += f"- {event.name}**\n"
   return response.strip()

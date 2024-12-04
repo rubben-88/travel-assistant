@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel
 from app.api import nlp, events, weather, overpass, localdatasets
 from app.api.opentripmap import OpenTripMapModel, query_opentripmap
@@ -47,7 +48,7 @@ def run_query(query: QueryRequest):
 
     # Step 2: Check if any pinned events exist
     city = info.get('city')
-    date = info.get('date')
+    date = info.get('date') or datetime.today()
     keywords = info.get('keywords')
     if city is None or date is None:
         CITY_NOT_FOUND = "You seem to have not provided the city or date correctly. Please double check it"

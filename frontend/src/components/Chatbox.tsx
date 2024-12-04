@@ -65,7 +65,7 @@ const Chatbox: React.FC = () => {
       const botResponse: Message = { user_or_chatbot: 'chatbot', message: data.message };
       addMessage(botResponse);
       addItem({
-        segment: `/chat/${data.id}`,
+        segment: `chat/${data.id}`,
         title: data.id,
       }, 4);
       navigate(`/chat/${data.id}`, { replace: true });
@@ -125,7 +125,7 @@ const Chatbox: React.FC = () => {
                     {msg.user_or_chatbot}
                   </Typography>
                 }
-                secondary={<Typography variant="body2">{msg.message}</Typography>}
+                secondary={<Typography variant="body2" style={{ whiteSpace: 'pre-line' }}>{msg.message}</Typography>}
               />
             </ListItem>
           ))}
