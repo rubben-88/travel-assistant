@@ -2,10 +2,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Box, TextField, IconButton, Typography, Paper, List, ListItem, ListItemText } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import { useLocation, useNavigate } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
 import { client } from '../services/apiService';
 import type { components } from '../services/api';
 import { useNavigationContext } from '../navigation';
-import ReactMarkdown from "react-markdown";
 
 type Message = components['schemas']['ChatMessage'];
 
