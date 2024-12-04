@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { client } from '../services/apiService';
 import type { components } from '../services/api';
 import { useNavigationContext } from '../navigation';
+import ReactMarkdown from "react-markdown";
 
 type Message = components['schemas']['ChatMessage'];
 
@@ -125,7 +126,11 @@ const Chatbox: React.FC = () => {
                     {msg.user_or_chatbot}
                   </Typography>
                 }
-                secondary={<Typography variant="body2" style={{ whiteSpace: 'pre-line' }}>{msg.message}</Typography>}
+                secondary={<Typography variant="body2" style={{ whiteSpace: 'pre-line' }}>
+                  <ReactMarkdown>
+                    {msg.message}
+                  </ReactMarkdown>
+                </Typography>}
               />
             </ListItem>
           ))}

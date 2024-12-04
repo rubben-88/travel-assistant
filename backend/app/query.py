@@ -82,8 +82,12 @@ def run_query(query: QueryRequest):
     historic_places = localdatasets.get_historical_places(city)
     
     # TODO Implement ammenities keywords extraction in nlp
-    amenity = keywords[0] if keywords else "cafe"  # Use first keyword as amenity type or default to "cafe"
-    poi_results = overpass.get_poi_data(city, amenity)
+    try:
+        amenity = keywords[0] if keywords else "cafe"  # Use first keyword as amenity type or default to "cafe"
+        poi_results = overpass.get_poi_data(city, amenity)
+    except:
+        print("Something went wrong while fetching poi_results! (query.py)")
+        poi_results = []
     
     # Step 6: Return the compiled response
     answer: Answer = {
