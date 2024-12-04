@@ -63,8 +63,9 @@ def run_query(query: QueryRequest):
     pinned_events = events.check_pinned_events(city, date, keywords)
 
     if pinned_events:
-        return QueryResponse(id=query.session_id, message=f"Prioritized event: {pinned_events}")
-
+        pinned_answer = lm_studio_request(answer)
+        return QueryResponse(id=query.session_id, message=pinned_answer)
+    
     # Step 3: Fetch events from OpenTripMap
     event_results = query_opentripmap(OpenTripMapModel(placename=city, kinds=keywords))
 
