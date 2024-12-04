@@ -64,11 +64,13 @@ const Chatbox: React.FC = () => {
     if (data) {
       const botResponse: Message = { user_or_chatbot: 'chatbot', message: data.message };
       addMessage(botResponse);
-      addItem({
-        segment: `chat/${data.id}`,
-        title: data.id,
-      }, 4);
-      navigate(`/chat/${data.id}`, { replace: true });
+      if (sessionId === '/') {
+        addItem({
+          segment: `chat/${data.id}`,
+          title: data.id,
+        }, 4);
+        navigate(`/chat/${data.id}`, { replace: true });
+      }
     }
   };
 

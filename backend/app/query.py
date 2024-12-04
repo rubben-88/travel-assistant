@@ -48,7 +48,10 @@ def run_query(query: QueryRequest):
 
     # Step 2: Check if any pinned events exist
     city = info.get('city')
-    date = info.get('date') or datetime.today()
+    date = info.get('date')
+    if date is None:
+        date = datetime.today().strftime('%Y-%m-%d')
+
     keywords = info.get('keywords')
     if city is None or date is None:
         CITY_NOT_FOUND = "You seem to have not provided the city or date correctly. Please double check it"
