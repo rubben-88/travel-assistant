@@ -12,4 +12,4 @@ OPENTRIPMAP_API_KEY = os.getenv('OPENTRIPMAP_API_KEY')
 
 LMSTUDIO_HOST = os.getenv('LMSTUDIO_HOST', "127.0.0.1:1234")
 LMSTUDIO_ENDPOINT = os.getenv('LMSTUDIO_ENDPOINT', "v1/chat/completions")
-LMSTUDIO_MODEL = os.getenv('LMSTUDIO_MODEL', "llama-3-8b-lexi-uncensored")
+LMSTUDIO_MODEL = os.getenv('LMSTUDIO_MODEL', "llama-3.2-1b-instruct") # llama-3-8b-lexi-uncensored

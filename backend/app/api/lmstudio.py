@@ -12,6 +12,7 @@ class Message(TypedDict):
     content: str
 
 def lm_studio_request(message: Answer) -> str:
+    print("lm activated")
     full_url = f"http://{LMSTUDIO_HOST}/{LMSTUDIO_ENDPOINT}"
     
     messages = [
@@ -39,5 +40,5 @@ def lm_studio_request(message: Answer) -> str:
         if response.status_code == 200:
             json_repsonse = response.json()
             return json_repsonse['choices'][0]['message']['content']
-    finally:  # noqa: E722
+    except:  # noqa: E722
         return generate_ai_style_response(message["events"], message["weather"])

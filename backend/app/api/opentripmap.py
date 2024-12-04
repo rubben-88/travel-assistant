@@ -14,6 +14,8 @@ from app.models.event_model import Event
 from pathlib import Path
 from app.config import OPENTRIPMAP_API_KEY
 from pydantic import BaseModel, PositiveInt, model_validator
+import copy
+from app.api.translation import translate_text
 
 HOST = "opentripmap-places-v1.p.rapidapi.com"
 VALID_KINDS_FILE_PATH = Path(__file__).resolve().parents[2] / 'app' / 'api' / 'opentripmap_valid_kinds.txt'
@@ -156,14 +158,77 @@ def query_opentripmap(query: OpenTripMapModel):
         query_params=query_params
     )
     
+    # ID, NAME, LOCATION
     events = [Event(
         id          = obj['xid'],
         name        = obj['name'],
         location    = query.placename,  # opentripmap returns the exact coordinates as well
         #category    = obj['kinds'],    # opentripmap returns a list of relevant categories
-    ) for obj in result]
+    ) for obj in result if obj['name']]
 
-    return events
+    # post-processing: get more info about the place using the xid
+    new_events = []
+    for event in events:
+        new_event = copy.deepcopy(event)
+        try:
+            details = make_request(
+                endpoint=f"en/places/xid/{str(event.id)}",
+                query_params=query_params
+            )
+            # CATEGORY
+            if "kinds" in details:
+                new_event.category = details["kinds"].split(",")[0] # pick the first one as the model doesn't allow multiple categories
+            # PRIORITY
+            if "rate" in details:
+                try:
+                    new_event.priority = int(details["rate"])
+                except:
+                    pass # sometimes the rate is not an integer but for example "3h"
+            # URL
+            if "wikipedia" in details:
+                new_event.url = details["wikipedia"]
+            
+            # DESCRIPTION
+            try:
+                summary = details["wikipedia_extracts"]["text"]
+
+                # maximum character limit is 500
+                sentences = summary.split(".")
+                shortened = False
+                while len(summary) >= 500:
+                    sentences = sentences[:-1]
+                    summary = ". ".join(sentences)
+                    shortened = True
+                if shortened:
+                    summary += "."
+
+                try:
+                    # use translation if exists (country code)
+                    language = details["address"]["country_code"]
+                    translated = translate_text(summary, language, "en")
+                    new_event.description = translated
+                except Exception as e:
+                    print(f"Couldn't translate. {e}")
+                    try:
+                        # use translation if exists (wikipedia tag)
+                        language = details["wikipedia_extracts"]["title"].split(":")[0]
+                        translated = translate_text(summary, language, "en")
+                        new_event.description = translated
+                    except:
+                        # if translation failed, just use the original
+                        new_event.description = summary
+            except:
+                # if something goes wrong while retrieving a description, just dont use it
+                pass
+            pass
+
+        except Exception as e:
+            print(e)
+
+        finally:
+            new_events.append(new_event)
+
+    return new_events
     
         
 if __name__ == "__main__":

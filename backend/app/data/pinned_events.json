@@ -32,6 +32,17 @@
             "url": null,
             "priority": 0,
             "pinned": true
+        },
+        {
+            "id": "1733310714040",
+            "name": "Pukkelpop",
+            "location": "Paris",
+            "description": "A festival.",
+            "date": "2024-12-04T00:00:00+00:00",
+            "category": "festival",
+            "url": null,
+            "priority": 0,
+            "pinned": true
         }
     ]
 }
