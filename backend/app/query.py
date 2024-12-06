@@ -66,8 +66,9 @@ def run_query(query: QueryRequest):
     pinned_events = events.check_pinned_events(city, date, keywords)
 
     if pinned_events:
-        return QueryResponse(id=query.session_id, message=f"Prioritized event: {pinned_events}")
-
+        pinned_answer = lm_studio_request(pinned_events)
+        return QueryResponse(id=query.session_id, message=pinned_answer)
+    
     # Step 3: Fetch events from OpenTripMap
     event_results = query_opentripmap(OpenTripMapModel(placename=city, kinds=keywords))
 
@@ -85,8 +86,12 @@ def run_query(query: QueryRequest):
     historic_places = localdatasets.get_historical_places(city)
     
     # TODO Implement ammenities keywords extraction in nlp
-    amenity = keywords[0] if keywords else "cafe"  # Use first keyword as amenity type or default to "cafe"
-    poi_results = overpass.get_poi_data(city, amenity)
+    try:
+        amenity = keywords[0] if keywords else "cafe"  # Use first keyword as amenity type or default to "cafe"
+        poi_results = overpass.get_poi_data(city, amenity)
+    except:
+        print("Something went wrong while fetching poi_results! (query.py)")
+        poi_results = []
     
     # Step 6: Return the compiled response
     answer: Answer = {
