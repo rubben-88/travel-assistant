@@ -66,7 +66,11 @@ def query_weather(query: WeatherQueryModel):
     # Get latitude and longitude for the city
     lat, lon = get_lat_lon(query.city)
 
-    print(f"Querying weather for: city={query.city}, lat={lat}, lon={lon}, units={query.units}")
+    print(f"""Querying OpenWeatherMap for: 
+    city={query.city}, 
+    lat={lat}, 
+    lon={lon}, 
+    units={query.units}""")
 
     # Call One Call API with latitude and longitude
     query_params = {
@@ -78,7 +82,7 @@ def query_weather(query: WeatherQueryModel):
     }
     result = make_request(endpoint=ONE_CALL_API_URL, query_params=query_params)
     
-    print(result)
+    print("Weather info found.")
 
     # Extract current weather data
     weather_description = (

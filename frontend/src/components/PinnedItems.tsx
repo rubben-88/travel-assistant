@@ -129,6 +129,7 @@ const PinnedItems = ({ isAdmin } : { isAdmin: boolean }) => {
           </Box>
 
           {/* Pinned Locations Section */}
+          {/*
           <Box sx={{ mt: 6 }}>
             <Typography variant="h5" gutterBottom>
               Pinned Locations
@@ -177,6 +178,7 @@ const PinnedItems = ({ isAdmin } : { isAdmin: boolean }) => {
               </Typography>
             )}
           </Box>
+          */}
         </>
       )}
     </Box>

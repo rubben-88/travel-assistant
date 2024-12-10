@@ -61,7 +61,11 @@ def query_ticketmaster(city: str, date: datetime.date, keywords: list[str]) -> l
     """Fetch events from Ticketmaster API."""
 
     date, end_date = get_start_end_date(datetime.combine(date, datetime.min.time()))
-    print(f"Querying Ticketmaster: city={city}, date={date}, endDate={end_date}, keywords={keywords}")
+    print(f"""Querying Ticketmaster for: 
+    city={city}, 
+    date={date}, 
+    endDate={end_date},
+    keywords={keywords}""")
 
     params = {
         "keyword": " ".join(keywords),
@@ -79,6 +83,7 @@ def query_ticketmaster(city: str, date: datetime.date, keywords: list[str]) -> l
     
     # Parse event data
     events_data = response.json().get("_embedded", {}).get("events", [])
+    print(f"Ticketmaster events found: {len(events_data)}")
     events = []
     
     for event_data in events_data:
@@ -88,7 +93,8 @@ def query_ticketmaster(city: str, date: datetime.date, keywords: list[str]) -> l
             location=city,  # Event location set to the input city
             url=event_data.get("url"),
             date=event_data["dates"]["start"]["localDate"],
-            category = event_data.get("classifications", [])[0].get("segment", {}).get("name", "Unknown Category")
+            category = event_data.get("classifications", [])[0].get("segment", {}).get("name", "Unknown Category"),
+            priority = 4 # priority 4 means higher than static events
         )
         events.append(event)
 
@@ -96,22 +102,30 @@ def query_ticketmaster(city: str, date: datetime.date, keywords: list[str]) -> l
 
 def check_pinned_events(city: str = None, date: datetime.date = None, keywords: list[str] = None):
     """Check for pinned events and locations matching the given city, date, and keywords."""
+
+    #print(f"---Checking pinned for city: {city.lower()}, date: {date} and keywords: {keywords}")
+    return_events = []
+
     # Check in pinned events
     with open(PINNED_EVENTS_PATH, 'r', encoding='utf-8') as events_file:
         pinned_events = json.load(events_file).get('pinned_events', [])
         for event in pinned_events:
+            #print(f"---pinned with location: {event['location'].lower()}, date: {parse_date(event['date'])} and category: {event.get('category', '').lower()}")
             if (
                 (city is None or event['location'].lower() == city.lower()) and
-                (date is None or parse_date(event['date']) == date) and
-                (keywords is None or any(keyword.lower() in event.get('category', '').lower() for keyword in keywords))
+                (date is None or event['date'] is None or parse_date(event['date']) == date) and
+                (len(keywords)==0 or event['category'] is None or any(keyword.lower() in event['category'].lower() for keyword in keywords))
             ):
-                return {"type": "event", "data": event}
+                basemodel_event = Event(**event)
+                return_events.append(basemodel_event)
+                #return {"type": "event", "data": event}
+    return return_events
 
     # Check in pinned locations
-    with open(PINNED_LOCATIONS_PATH, 'r', encoding='utf-8') as locations_file:
-        pinned_locations = json.load(locations_file).get('pinned_locations', [])
-        for location in pinned_locations:
-            if city is None or location['city'].lower() == city.lower():
-                return {"type": "location", "data": location}
+    #with open(PINNED_LOCATIONS_PATH, 'r', encoding='utf-8') as locations_file:
+    #    pinned_locations = json.load(locations_file).get('pinned_locations', [])
+    #    for location in pinned_locations:
+    #        if city is None or location['city'].lower() == city.lower():
+    #            return {"type": "location", "data": location}
 
     return None

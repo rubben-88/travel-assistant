@@ -14,8 +14,12 @@ class Message(TypedDict):
 def lm_studio_request(message: Answer) -> str:
     full_url = f"http://{LMSTUDIO_HOST}/{LMSTUDIO_ENDPOINT}"
     
+
+    #ROLE = "You are application assistant. Based on given JSON tell what person can visit. Answer in human way like chat assistant talking to a person."
+    ROLE = "The input is JSON data about a city. Give a summary about all these events (still to happen) in order with a human feel to it, formulated mostly as continuous text. Do not mention you are making a summary."
+
     messages = [
-        { "role": "system", "content": "You are application assistant. Based on given JSON tell what person can visit. Answer in human way like chat assistant talking to a person." },
+        { "role": "system", "content": ROLE },
         { "role": "user", "content": str(message) }
     ]
 

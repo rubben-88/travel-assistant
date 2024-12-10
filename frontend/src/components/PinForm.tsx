@@ -99,7 +99,7 @@ const PinForm = ({ onRefresh } : { onRefresh: () => void }) => {
           fullWidth
         >
           <MenuItem value="event">Event</MenuItem>
-          <MenuItem value="location">Location</MenuItem>
+          {/*<MenuItem value="location">Location</MenuItem>*/}
         </Select>
       </FormControl>
 
