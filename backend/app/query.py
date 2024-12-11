@@ -12,6 +12,7 @@ from app.history.chat_history import (
 )
 from app.answer import Answer
 from app.dateparser import parse_date
+from app.city_checker.citychecker import is_city
 
 CITY_NOT_FOUND = "You seem to have not provided the city correctly. Please double check it"
 
@@ -49,22 +50,36 @@ def run_query(query: QueryRequest):
     info = nlp.extract_info(query.user_input)  # Use query.user_input from the model
     print(f"NLP extraction: {info}")
 
+    city = info.get('city')
+    date = info.get('date')
+    keywords = info.get('keywords')
+
     # Step 1.5: 
     # --CITY--
-    city = info.get('city')
-
     if city is None:
-        add_message(
-            InsertMessage(
-                session_id          = query.session_id,
-                user_or_chatbot     = UserOrChatbot.CHATBOT,
-                message             = CITY_NOT_FOUND
+
+        # The city does not always get picked up. 
+        # If it is not, we can check if a keyword is a city by using a predefined list of cities.
+        found = False
+        for keyword in keywords[:]: # iterate over copy to prevent removing while iterating
+            if is_city(keyword):
+                city = keyword
+                keywords.remove(keyword)
+                found = True
+                break
+
+        if not found:
+            add_message(
+                InsertMessage(
+                    session_id          = query.session_id,
+                    user_or_chatbot     = UserOrChatbot.CHATBOT,
+                    message             = CITY_NOT_FOUND
+                )
             )
-        )
-        return QueryResponse(id=query.session_id, message=CITY_NOT_FOUND)
-    
+            return QueryResponse(id=query.session_id, message=CITY_NOT_FOUND)
+    print(f"Got city: {city}")
+
     # --DATE--
-    date = info.get('date')
     try:
         date = parse_date(date)
     except:
@@ -73,20 +88,28 @@ def run_query(query: QueryRequest):
         date = datetime.today().date()
     
     # --KEYWORDS--
-    keywords = info.get('keywords')
-
     # Step 2: Check if any pinned events exist
     pinned_events = events.check_pinned_events(city, date, keywords)
+    pinned_events = pinned_events if pinned_events is not None else []
+    print(f"Pinned events found: {len(pinned_events)}")
 
-    if pinned_events:
-        pinned_answer = lm_studio_request(pinned_events)
-        return QueryResponse(id=query.session_id, message=pinned_answer)
+    #if pinned_events:
+    #    answer: Answer = {
+    #        "events": pinned_events,
+    #        "weather": "",
+    #        "pois": [],
+    #        "unesco_sites": [],
+    #        "hotels_motels": [],
+    #        "historic_places": []
+    #    }
+    #    pinned_answer = lm_studio_request(answer)
+    #    return QueryResponse(id=query.session_id, message=pinned_answer)
     
-    # Step 3: Fetch events from OpenTripMap
-    event_results = query_opentripmap(OpenTripMapModel(placename=city, kinds=keywords))
+    # Step 3: Fetch static events from OpenTripMap
+    event_results = pinned_events + query_opentripmap(OpenTripMapModel(placename=city, kinds=keywords))
 
-    # Step 4: Fetch dynamic events from Ticketmaster and append them to OpenTripMap results
-    event_results.extend(events.query_ticketmaster(city, date, keywords))
+    # Step 4: Fetch dynamic events from Ticketmaster
+    event_results = events.query_ticketmaster(city, date, keywords) + event_results
 
     # Step 5: Fetch weather from OpenWeatherMap
     weather_info = ""
@@ -97,8 +120,11 @@ def run_query(query: QueryRequest):
         weather_info = query_weather(weather_query)
 
     unesco_sites = localdatasets.get_unesco_sites(city)
+    print(f"---unesco sites: {len(unesco_sites)}")
     hotels_motels = localdatasets.get_hotels_motels(city)
+    print(f"---hotels motels: {len(hotels_motels)}")
     historic_places = localdatasets.get_historical_places(city)
+    print(f"---historic places: {len(historic_places)}")
     
     # TODO Implement ammenities keywords extraction in nlp
     try:

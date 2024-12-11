@@ -181,7 +181,10 @@ def query_opentripmap(query: OpenTripMapModel):
             # PRIORITY
             if "rate" in details:
                 try:
-                    new_event.priority = int(details["rate"])
+                    if (details["rate"][-1] == "h"): # apparantly the '...h' case is the only special case
+                        new_event.priority = int(details["rate"][:-1])
+                    else:
+                        new_event.priority = int(details["rate"])
                 except:
                     pass # sometimes the rate is not an integer but for example "3h"
             # URL
@@ -228,6 +231,7 @@ def query_opentripmap(query: OpenTripMapModel):
         finally:
             new_events.append(new_event)
 
+    print(f"Opentripmap events found: {len(new_events)}")
     return new_events
     
         

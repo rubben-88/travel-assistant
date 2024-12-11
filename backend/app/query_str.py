@@ -4,7 +4,7 @@ from app.models.event_model import Event
 
 def generate_ai_style_response(events: list[Event], weather: str) -> str:
   # Sort events by priority and pinned status
-  sorted_events = sorted(events, key=lambda x: (-x.pinned, -x.priority, x.date or datetime.max))
+  sorted_events = sorted(events, key=lambda x: (-x.pinned, -x.priority))
   
   # Start the response with the weather
   response = ""

@@ -16,7 +16,7 @@ import type { components } from '../services/api';
 
 const PinnedItems = ({ isAdmin } : { isAdmin: boolean }) => {
   const [pinnedEvents, setPinnedEvents] = useState<components['schemas']['Event'][]>([]);
-  const [pinnedLocations, setPinnedLocations] = useState<components['schemas']['Location'][]>([]);
+  //const [pinnedLocations, setPinnedLocations] = useState<components['schemas']['Location'][]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,7 +27,7 @@ const PinnedItems = ({ isAdmin } : { isAdmin: boolean }) => {
       const events = await client.GET('/admin/pinned_events', {});
       const locations = await client.GET('/admin/pinned_locations', {});
       setPinnedEvents(events.data?.pinned_events ?? []);
-      setPinnedLocations(locations.data?.pinned_locations ?? []);
+      //setPinnedLocations(locations.data?.pinned_locations ?? []);
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('Error fetching pinned items:', err);
@@ -46,10 +46,10 @@ const PinnedItems = ({ isAdmin } : { isAdmin: boolean }) => {
     fetchPinnedItems();
   };
 
-  const unpinLocation = async (id: string) => {
-    await client.DELETE('/admin/unpin_location/{location_id}', { params: { path: { location_id: id }} });
-    fetchPinnedItems();
-  };
+  //const unpinLocation = async (id: string) => {
+  //  await client.DELETE('/admin/unpin_location/{location_id}', { params: { path: { location_id: id }} });
+  //  fetchPinnedItems();
+  //};
 
   return (
     <Box sx={{ p: 4 }}>
@@ -129,6 +129,7 @@ const PinnedItems = ({ isAdmin } : { isAdmin: boolean }) => {
           </Box>
 
           {/* Pinned Locations Section */}
+          {/*
           <Box sx={{ mt: 6 }}>
             <Typography variant="h5" gutterBottom>
               Pinned Locations
@@ -177,6 +178,7 @@ const PinnedItems = ({ isAdmin } : { isAdmin: boolean }) => {
               </Typography>
             )}
           </Box>
+          */}
         </>
       )}
     </Box>
