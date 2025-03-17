@@ -1,6 +1,10 @@
 # travel-assistant
 
-# Steps to run code: - Jad, Ruben
+## Description
+
+A chatbot that provides more information about things to do and see in some area. The chatbot can process specific dates and areas and general user intent using NLP. It looks at static touristic places as well as dynamic one-time events and the current weather. It then formulates a sensible answer using a local language model. Admin users can also insert events themselves and even prioritize certain events. Only sources with free licenses or with a free tier subscription were used.
+
+## Steps to run code: - Jad, Ruben
 
 - **Setup Database**
     - **Install MongoDB**: https://www.mongodb.com/try/download/community
